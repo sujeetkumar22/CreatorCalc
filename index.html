@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Creator Pricing Calculator Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#8a2ce2", "background-dark": "#050505", "card-dark": "#0c0c0c", "border-dark": "#1a1a1a" },
+                    fontFamily: { "display": ["Inter", "sans-serif"], "mono": ["JetBrains Mono", "monospace"] },
+                    animation: { 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-dark font-display text-slate-100 min-h-screen relative overflow-x-hidden">
+
+    <div class="fixed inset-0 grid-overlay pointer-events-none"></div>
+    <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] glow-orb pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] glow-orb pointer-events-none"></div>
+
+    <div id="leadModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('leadModal')"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
+            <div class="bg-[#121212] border border-[#8a2ce2] rounded-2xl p-8 shadow-[0_0_50px_rgba(138,44,226,0.2)]">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-black text-white mb-2">Save Your Quote ⚡</h3>
+                    <p class="text-slate-400 text-sm">Enter details to download the official valuation card.</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">Full Name</label>
+                        <input id="userName" type="text" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all" placeholder="Enter your name">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">Email Address</label>
+                        <input id="userEmail" type="email" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all" placeholder="you@example.com">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">Instagram ID</label>
+                            <input id="userInsta" type="text" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all" placeholder="@username">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">WhatsApp</label>
+                            <input id="userPhone" type="tel" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all" placeholder="+91 999...">
+                        </div>
+                    </div>
+                    <button onclick="submitAndDownload()" id="submitBtn" class="w-full bg-[#8a2ce2] hover:bg-[#7a25c9] text-white font-bold py-4 rounded-xl transition-all mt-4 flex items-center justify-center gap-2">
+                        <span>Download Invoice</span>
+                        <span class="material-symbols-outlined text-sm">download</span>
+                    </button>
+                    <button onclick="closeModal('leadModal')" class="w-full text-slate-500 text-xs font-bold uppercase tracking-widest hover:text-white mt-4">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="surveyModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-6">
+            <div class="bg-[#121212] border border-white/10 rounded-2xl p-8 text-center relative overflow-hidden">
+                
+                <div id="surveyQuestions">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 text-green-500 mb-4">
+                        <span class="material-symbols-outlined text-2xl">check_circle</span>
+                    </div>
+                    <h3 class="text-2xl font-black text-white mb-2">Quote Downloading...</h3>
+                    <p class="text-slate-400 text-sm mb-6">Answer 2 quick questions to unlock our <b>Winning Brand Pitch Template</b>.</p>
+                    <div class="space-y-4 text-left">
+                        <div>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">1. What is your primary niche?</label>
+                            <select id="surveyNiche" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all cursor-pointer">
+                                <option value="" disabled selected>Select your niche...</option>
+                                <option value="Tech & Engineering">Tech & Engineering</option>
+                                <option value="Finance & SaaS">Finance & SaaS</option>
+                                <option value="Beauty & Makeup">Beauty & Makeup</option>
+                                <option value="Health & Fitness">Health & Fitness</option>
+                                <option value="Travel & Vlog">Travel & Vlog</option>
+                                <option value="Food & Cooking">Food & Cooking</option>
+                                <option value="Lifestyle & Fashion">Lifestyle & Fashion</option>
+                                <option value="Gaming & Esports">Gaming & Esports</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 block">2. Brand Deal Experience</label>
+                            <select id="surveyExp" class="w-full bg-black/40 border border-[#333] rounded-lg px-4 py-3 text-white focus:border-[#8a2ce2] focus:ring-0 transition-all cursor-pointer">
+                                <option value="Newbie">I'm new (0 deals)</option>
+                                <option value="Beginner">1-5 deals</option>
+                                <option value="Intermediate">5-20 deals</option>
+                                <option value="Pro">20+ deals</option>
+                            </select>
+                        </div>
+                        <button onclick="submitSurvey()" class="w-full bg-white text-black font-black py-4 rounded-xl hover:bg-slate-200 transition-all mt-4">
+                            Unlock Template Now
+                        </button>
+                    </div>
+                </div>
+
+                <div id="surveyResult" class="hidden text-left">
+                    <h3 class="text-xl font-bold text-white mb-4 text-center">🎉 Here is your Pitch Template</h3>
+                    <div class="relative mb-6">
+                        <textarea id="pitchTemplate" class="w-full h-48 bg-[#1A1A1A] border border-[#333] rounded-xl p-4 text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono" readonly>
+Hi [Brand Team],
+
+I've been using [Product Name] for a while and I'm a huge fan of what you're building.
+
+I am a content creator in the [Your Niche] space. My audience is highly engaged and always looking for recommendations. 
+
+I have an idea for a Reel that highlights [Key Feature] in an authentic way that could drive immediate interest for your brand.
+
+Here is a link to my previous work: [Your Portfolio Link]
+
+Would you be open to a quick 5-min chat?
+
+Best,
+[Your Name]</textarea>
+                        <button onclick="copyTemplate()" id="copyBtn" class="absolute top-3 right-3 bg-[#8a2ce2] hover:bg-[#7a25c9] text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all">
+                            <span class="material-symbols-outlined text-sm">content_copy</span> Copy
+                        </button>
+                    </div>
+
+                    <div class="bg-[#111] border border-white/5 rounded-xl p-4 text-center">
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Want more brand deals?</p>
+                        <a href="https://chat.whatsapp.com/YOUR_WHATSAPP_LINK_HERE" target="_blank" class="w-full bg-[#25D366] hover:bg-[#20bd5a] text-black font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-6 h-6">
+                            <span>Join Creator Community</span>
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                    
+                    <button onclick="closeModal('surveyModal')" class="w-full text-slate-500 text-xs font-bold uppercase tracking-widest hover:text-white mt-4">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="relative z-10 layout-container flex flex-col min-h-screen">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/5 px-6 lg:px-20 py-4 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="flex items-center gap-3 text-white">
+                <div class="size-6 text-primary">
+                    <span class="material-symbols-outlined text-3xl">calculate</span>
+                </div>
+                <h2 class="text-white text-xl font-black leading-tight tracking-tight">CREATOR<span class="text-primary">CALC</span></h2>
+            </div>
+            <div class="flex flex-1 justify-end gap-8">
+                <a href="https://chat.whatsapp.com/LSM4Vmw3z1cAzjD90QUmtq" target="_blank" class="hidden md:flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-white transition-colors">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-4 h-4">
+                    Join Community
+                </a>
+            </div>
+        </header>
+
+        <main class="flex-1 flex flex-col items-center px-4 py-12 lg:py-20 max-w-[1200px] mx-auto w-full">
+            <div class="text-center mb-16 space-y-4">
+                <h1 class="text-white text-5xl lg:text-7xl font-black tracking-tighter leading-none">
+                    STOP GUESSING.<br/>
+                    <span class="text-primary">KNOW YOUR WORTH.</span>
+                </h1>
+                <p class="text-slate-400 text-lg max-w-2xl mx-auto font-light">
+                    The algorithmic standard for content creator pricing in India.
+                </p>
+            </div>
+
+            <div id="capture-target" class="w-full max-w-4xl glass-calculator rounded-2xl p-8 lg:p-12 mb-20 relative overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <div class="space-y-6">
+                        <label class="block">
+                            <span class="text-slate-300 text-xs font-bold uppercase tracking-widest mb-2 block">Average Views (30d)</span>
+                            <div class="relative group">
+                                <input id="viewsInput" class="w-full bg-black/40 border-2 border-border-dark focus:border-primary focus:ring-0 rounded-xl h-16 px-6 text-xl font-mono text-white transition-all placeholder:text-slate-700" placeholder="50000" type="number"/>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary transition-colors">visibility</span>
+                            </div>
+                        </label>
+                        <label class="block">
+                            <span class="text-slate-300 text-xs font-bold uppercase tracking-widest mb-2 block">Campaign Niche</span>
+                            <div class="relative group">
+                                <select id="nicheSelect" class="w-full bg-black/40 border-2 border-border-dark focus:border-primary focus:ring-0 rounded-xl h-16 px-6 text-lg text-white transition-all appearance-none cursor-pointer">
+                                    <option value="tech">Tech &amp; Engineering</option>
+                                    <option value="finance">Finance &amp; SaaS</option>
+                                    <option value="beauty">Beauty &amp; Makeup</option>
+                                    <option value="health">Health &amp; Fitness</option>
+                                    <option value="travel">Travel &amp; Vlog</option>
+                                    <option value="food">Food &amp; Drinks</option>
+                                    <option value="lifestyle">Lifestyle &amp; Fashion</option>
+                                    <option value="gaming">Gaming &amp; Esports</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-slate-300 text-xs font-bold uppercase tracking-widest mb-2 block">Usage Rights</span>
+                            <div class="flex p-1.5 bg-black/60 rounded-xl border border-border-dark h-16">
+                                <label class="flex-1 flex items-center justify-center cursor-pointer rounded-lg transition-all text-sm font-bold has-[:checked]:bg-primary has-[:checked]:text-white text-slate-500">
+                                    <input checked="" class="hidden" name="rights" type="radio" value="social"/>
+                                    Social Only
+                                </label>
+                                <label class="flex-1 flex items-center justify-center cursor-pointer rounded-lg transition-all text-sm font-bold has-[:checked]:bg-primary has-[:checked]:text-white text-slate-500">
+                                    <input class="hidden" name="rights" type="radio" value="full"/>
+                                    Full Usage
+                                </label>
+                                <label class="flex-1 flex items-center justify-center cursor-pointer rounded-lg transition-all text-sm font-bold has-[:checked]:bg-primary has-[:checked]:text-white text-slate-500">
+                                    <input class="hidden" name="rights" type="radio" value="perpetual"/>
+                                    Perpetual
+                                </label>
+                            </div>
+                        </div>
+                        <button id="calcBtn" class="w-full bg-primary h-16 rounded-xl text-white font-black text-lg tracking-widest uppercase hover:brightness-110 shadow-[0_10px_30px_rgba(138,44,226,0.3)] transition-all flex items-center justify-center gap-3">
+                            Calculate Value
+                            <span class="material-symbols-outlined">bolt</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="border-t border-white/5 pt-10 text-center">
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">Estimated Campaign Value (Average)</p>
+                    <div class="font-mono text-6xl md:text-8xl font-bold text-primary digital-glow flex items-center justify-center gap-4">
+                        <span class="opacity-50 text-4xl md:text-5xl">₹</span>
+                        <span id="price-result">0.00</span>
+                    </div>
+                    <div class="mt-8 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-6">
+                        <div class="text-center px-4">
+                            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Lowest</p>
+                            <p id="min-price" class="text-white font-mono text-xl font-bold">₹0</p>
+                        </div>
+                        <div class="text-center px-4">
+                            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Average</p>
+                            <p id="avg-price" class="text-primary font-mono text-xl font-bold">₹0</p>
+                        </div>
+                        <div class="text-center px-4">
+                            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Maximum</p>
+                            <p id="max-price" class="text-white font-mono text-xl font-bold">₹0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-20 text-center space-y-4">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest animate-pulse">👇 Save this for your next negotiation</p>
+                <button onclick="openModal('leadModal')" class="group relative inline-flex items-center gap-3 bg-white text-black text-lg font-black uppercase tracking-wider px-8 py-4 rounded-full hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.3)]">
+                    <span class="material-symbols-outlined text-2xl group-hover:animate-bounce">download</span>
+                    Download Official Quote
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-20">
+                <div class="bg-card-dark border border-border-dark p-8 rounded-2xl hover:border-primary/50 transition-colors group">
+                    <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary">monitoring</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Base Rate</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Calculated using dynamic CPM floor based on your niche selection.</p>
+                    <div id="baseRateDisplay" class="text-white font-mono font-bold">₹0.00</div>
+                </div>
+                <div class="bg-card-dark border border-border-dark p-8 rounded-2xl hover:border-primary/50 transition-colors group">
+                    <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary">movie_edit</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Production Fee</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Estimated overhead for high-complexity video content.</p>
+                    <div id="prodFeeDisplay" class="text-white font-mono font-bold">₹0.00</div>
+                </div>
+                <div class="bg-card-dark border border-border-dark p-8 rounded-2xl hover:border-primary/50 transition-colors group">
+                    <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary">verified_user</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Rights Multiplier</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Multiplier based on usage rights duration.</p>
+                    <div id="rightsMultDisplay" class="text-primary font-mono font-bold">1.0x Applied</div>
+                </div>
+            </div>
+
+            <footer class="w-full border-t border-white/5 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3 opacity-50">
+                    <span class="material-symbols-outlined text-xl">calculate</span>
+                    <span class="text-xs font-bold tracking-widest uppercase">CreatorCalc © 2024</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
