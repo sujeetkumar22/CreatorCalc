@@ -64,7 +64,6 @@ function calculateRate() {
     let rights = rightsInput ? rightsInput.value : "social"; 
     
     // Fallback: Check if values in dropdown match keys in cpmRates. 
-    // Your HTML has "Tech & Engineering" but JS keys are "tech". We need to map them.
     // simpler way: lower case the first word
     let nicheKey = niche.split(' ')[0].toLowerCase(); 
     // Manual mapping if simple splitting fails
@@ -150,10 +149,29 @@ async function submitAndDownload() {
     const price = document.getElementById("price-result").innerText;
     const submitBtn = document.getElementById("submitBtn");
 
-    if(!name || !email || !insta) {
-        alert("Please fill in Name, Email and Instagram.");
+    if(!name || !email || !insta || !phone) {
+        alert("Please fill in all fields.");
         return;
     }
+
+    // --- NEW VALIDATION LOGIC ---
+
+    // 1. Email Validation (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address (e.g., name@domain.com).");
+        return;
+    }
+
+    // 2. Phone Validation (Must be exactly 10 digits)
+    // We strip out any spaces, dashes, or + signs first
+    const cleanPhone = phone.replace(/\D/g, ''); 
+    if (cleanPhone.length !== 10) {
+        alert("Please enter a valid 10-digit mobile number.");
+        return;
+    }
+
+    // ----------------------------
 
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = "Saving... <span class='material-symbols-outlined animate-spin'>progress_activity</span>";
