@@ -5,7 +5,7 @@
 // ---------------------------------------------------------
 // REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS WHEN READY
 const supabaseUrl = 'https://plpsqgvsquasicvrwhyb.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBscHNxZ3ZzcXVhc2ljdnJ3aHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDY1ODksImV4cCI6MjA4NDU4MjU4OX0.y5P_iRdX2BFAYsCH0e-v572KW2sjyyMbP8Axpn73S9A';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBscHNxZ3ZzcXVhc2ljdnJ3aHliIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTAwNjU4OSwiZXhwIjoyMDg0NTgyNTg5fQ.w9iZr_JocVWLjz5pFqfdmzMenwkCW3ucnM7Id36Xfak';
 
 // Initialize Supabase SAFELY
 let supabaseClient = null;
